@@ -1,0 +1,5 @@
+finvizfinance
+yahoo_fin
+prophet
+tqdm
+matplotlib
