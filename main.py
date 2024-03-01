@@ -23,7 +23,7 @@ significant_stocks = []
 
 for i in tqdm(range(pd.shape[0])):
     ticker = pd.iloc[i]['Ticker']
-    data = get_data(ticker, start_date='12/12/2022')
+    data = get_data(ticker, start_date='01/01/2024')
     df = data['close'].reset_index()
     df.columns = ['ds', 'y']
 
@@ -38,7 +38,7 @@ for i in tqdm(range(pd.shape[0])):
     trend_slope = (trend_end - trend_start) / len(forecast)
 
     # Define your threshold for a significant positive trend
-    significance_threshold = 0.5  # Example threshold
+    significance_threshold = 0.8  # Example threshold
 
     if trend_slope >= significance_threshold:
         significant_stocks.append(ticker)
