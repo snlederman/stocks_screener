@@ -1,13 +1,35 @@
-# Use an official Python 3.9 runtime as a parent image
 FROM python:3.9-slim
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /usr/src/app
-COPY . .
+COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
+RUN apt-get update && apt-get install -y \
+    gcc \
+    build-essential \
+    libffi-dev \
+    libopenblas-dev \
+    libblas-dev \
+    liblapack-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# The CMD instruction can be omitted if you are running the container via PyCharm
+# Install Jupyter
+RUN pip install jupyter ipykernel notebook
+
+# Generate Jupyter config
+RUN jupyter notebook --generate-config
+
+# Allow root access and configure Jupyter to be accessible
+RUN echo "c.NotebookApp.ip = '0.0.0.0'" >> ~/.jupyter/jupyter_notebook_config.py
+RUN echo "c.NotebookApp.allow_root = True" >> ~/.jupyter/jupyter_notebook_config.py
+RUN echo "c.NotebookApp.token = ''" >> ~/.jupyter/jupyter_notebook_config.py
+RUN echo "c.NotebookApp.password = ''" >> ~/.jupyter/jupyter_notebook_config.py
+
+# Expose ports
+EXPOSE 4001 8888
+
+# Start Jupyter Notebook
+CMD ["jupyter", "notebook", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--port=8888"]
